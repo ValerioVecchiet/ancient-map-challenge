@@ -28,3 +28,7 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Game architecture
+- Keep both geography modes in the existing static Imperium game with one shared timer, question, and scoring engine, so their rules cannot diverge.
+- Store modern country outlines as local SVG path data derived from Natural Earth boundaries; never substitute point markers for geographic territories.

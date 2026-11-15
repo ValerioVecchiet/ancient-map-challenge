@@ -18,6 +18,8 @@
   const markers = {};
   let periodRegionIds = [];
   let selectedPeriodId = PERIODS[0].id;
+  let selectedMode = 'history';
+  let regions = REGIONS;
   let game = null;
 
   function shuffle(items) {
@@ -42,15 +44,28 @@
   }
 
   function buildMarkers() {
-    const paths = Object.keys(REGIONS)
-      .map((id) => `<path class="map-region" data-id="${id}" d="${REGION_SHAPES[id]}"><title>${REGIONS[id].name}</title></path>`)
+    const modern = selectedMode === 'modern';
+    regions = modern ? MODERN_REGIONS : REGIONS;
+    const shapes = modern ? MODERN_SHAPES : REGION_SHAPES;
+    const paths = Object.keys(regions)
+      .map((id) => `<path class="map-region" data-id="${id}" d="${shapes[id]}" role="button" tabindex="0" aria-label="Seleziona territorio"></path>`)
       .join('');
-    $('map').insertAdjacentHTML('beforeend', `<svg class="map-regions" viewBox="0 0 1920 1323" preserveAspectRatio="none" aria-hidden="true">${paths}</svg>`);
+    Object.keys(markers).forEach((id) => delete markers[id]);
+    $('map').classList.toggle('modern-map', modern);
+    $('map').parentElement.classList.toggle('modern-map-wrap', modern);
+    $('map').setAttribute('role', 'group');
+    $('map').setAttribute('aria-label', modern ? 'Mappa politica di Europa e Mediterraneo' : 'Cartina storica dell’Impero Romano');
+    $('map').innerHTML = `${modern ? '' : '<img class="map-image" src="./mappa-impero-romano.jpg" alt="" draggable="false" />'}<svg class="map-regions" viewBox="${modern ? '0 0 1200 950' : '0 0 1920 1323'}" preserveAspectRatio="xMidYMid meet">${modern ? `<path class="map-context" d="${MODERN_CONTEXT}" />` : ''}${paths}</svg>`;
     $('map').querySelectorAll('.map-region').forEach((el) => {
       markers[el.dataset.id] = el;
-      el.addEventListener('click', () => {
+      const select = () => {
         Object.values(markers).forEach((other) => other !== el && other.classList.remove('is-selected'));
         el.classList.toggle('is-selected');
+        el.setAttribute('aria-pressed', String(el.classList.contains('is-selected')));
+      };
+      el.addEventListener('click', select);
+      el.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); select(); }
       });
     });
   }
@@ -63,6 +78,7 @@
   function highlightRegion(id, state = null) {
     Object.entries(markers).forEach(([regionId, el]) => {
       el.classList.remove('is-active', 'is-ok', 'is-ko', 'is-selected');
+      el.setAttribute('aria-pressed', 'false');
       el.classList.toggle('is-off', !periodRegionIds.includes(regionId));
     });
     if (id && state) setRegionState(id, state);
@@ -71,6 +87,21 @@
   function setMapPeriod(period) {
     periodRegionIds = period.regions;
     highlightRegion(null);
+  }
+
+  function chooseMode(mode) {
+    selectedMode = mode;
+    $('mode-selection').hidden = true;
+    $('mode-setup').hidden = false;
+    $('history-setup').hidden = mode === 'modern';
+    $('setup-title').textContent = mode === 'modern' ? 'Modalità Attualità' : 'Modalità Storia';
+    $('start-btn').focus({ preventScroll: true });
+  }
+
+  function returnHome() {
+    $('mode-selection').hidden = false;
+    $('mode-setup').hidden = true;
+    showScreen('home');
   }
 
   function renderPeriods() {
@@ -93,12 +124,12 @@
   }
 
   function buildQuestion(regionId, poolIds) {
-    const target = REGIONS[regionId];
+    const target = regions[regionId];
     const kind = Math.random() < 0.5 ? 'name' : 'capital';
     const valueOf = (region) => (kind === 'name' ? region.name : region.capital);
     const distractors = shuffle(poolIds.filter((id) => id !== regionId))
       .slice(0, 3)
-      .map((id) => valueOf(REGIONS[id]));
+      .map((id) => valueOf(regions[id]));
     const options = shuffle([valueOf(target), ...distractors]);
     return { regionId, kind, options, answer: options.indexOf(valueOf(target)) };
   }
@@ -140,10 +171,10 @@
 
   function renderQuestion(question, index, total) {
     $('q-count').textContent = `Domanda ${index + 1} di ${total}`;
-    $('q-kind').textContent = question.kind === 'name' ? 'Identifica il territorio' : 'Capitale storica';
+    $('q-kind').textContent = question.kind === 'name' ? 'Identifica il territorio' : selectedMode === 'modern' ? 'Capitale' : 'Capitale storica';
     $('q-text').textContent = question.kind === 'name'
       ? 'Quale territorio è evidenziato sulla mappa?'
-      : 'Qual è la capitale storica del territorio evidenziato?';
+      : selectedMode === 'modern' ? 'Qual è la capitale dello stato evidenziato?' : 'Qual è la capitale storica del territorio evidenziato?';
 
     const optionsEl = $('options');
     optionsEl.innerHTML = '';
@@ -221,6 +252,11 @@
   }
 
   function rankMessage(accuracy) {
+    if (selectedMode === 'modern') {
+      if (accuracy >= 80) return 'Ottimo risultato, conosci il mondo di oggi!';
+      if (accuracy >= 50) return 'Buon lavoro: continua a esplorare la geografia.';
+      return 'Ci sono ancora tanti paesi da scoprire: riprova!';
+    }
     if (accuracy >= 80) return 'Sei un vero stratega di Roma!';
     if (accuracy >= 50) return 'Buon lavoro, legionario: continua ad allenarti.';
     return 'La storia ha ancora molto da insegnarti: riprova!';
@@ -247,7 +283,11 @@
   }
 
   function startGame() {
-    const period = PERIODS.find((p) => p.id === selectedPeriodId);
+    const period = selectedMode === 'modern'
+      ? { title: 'Modalità Attualità', year: 'Europa e Mediterraneo', regions: Object.keys(MODERN_REGIONS) }
+      : PERIODS.find((p) => p.id === selectedPeriodId);
+    if (!period) return;
+    buildMarkers();
     game = {
       period,
       deck: buildDeck(period.regions),
@@ -264,6 +304,7 @@
     };
     setMapPeriod(period);
     $('game-period').textContent = `${period.title} · ${period.year}`;
+    $('map-heading').textContent = selectedMode === 'modern' ? 'Mappa politica moderna' : 'Mappa del periodo';
     renderScoreboard();
     updateClock(GAME_SECONDS);
     setFeedback('', '');
@@ -275,7 +316,10 @@
   $('start-btn').addEventListener('click', startGame);
   $('quit-btn').addEventListener('click', () => finishGame('quit'));
   $('again-btn').addEventListener('click', startGame);
-  $('change-btn').addEventListener('click', () => showScreen('home'));
+  $('change-btn').addEventListener('click', returnHome);
+  $('history-mode-btn').addEventListener('click', () => chooseMode('history'));
+  $('modern-mode-btn').addEventListener('click', () => chooseMode('modern'));
+  $('back-modes-btn').addEventListener('click', returnHome);
 
   document.addEventListener('keydown', (event) => {
     if (!game || game.answered) return;
@@ -283,7 +327,7 @@
     if (choice >= 0 && choice < game.current.options.length) answer(choice);
   });
 
-  buildMarkers();
+  $('modern-preview').innerHTML = `<svg viewBox="0 0 1200 950" aria-hidden="true"><path class="map-context" d="${MODERN_CONTEXT}" />${Object.values(MODERN_SHAPES).map((d) => `<path class="preview-country" d="${d}" />`).join('')}</svg>`;
   renderPeriods();
   showScreen('home');
 })();

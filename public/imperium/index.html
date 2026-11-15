@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Imperium: il quiz di geostoria sul mondo antico e romano. Individua territori e capitali sulla mappa del Mediterraneo in una sfida contro il tempo." />
     <title>Imperium: Il Quiz di Geostoria</title>
-    <link rel="stylesheet" href="./style.css?v=3" />
-    <meta property="og:image" content="https://bolt.new/static/og_default.png">
+    <link rel="stylesheet" href="./style.css?v=4" />
+    <meta property="og:title" content="Imperium: Storia e Attualità">
+    <meta property="og:description" content="Territori e capitali: Roma antica o Europa e Mediterraneo di oggi, in una sfida di cinque minuti.">
+    <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content="https://bolt.new/static/og_default.png">
   </head>
   <body>
     <div class="ambient" aria-hidden="true"></div>
@@ -20,12 +21,25 @@
             <div class="brand-mark" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>
             </div>
-            <p class="eyebrow">Quiz di geostoria · Mediterraneo antico</p>
+            <p class="eyebrow">Quiz di geostoria · Europa e Mediterraneo</p>
             <h1>Imperium<span class="title-accent">: Il Quiz di Geostoria</span></h1>
-            <p class="subtitle">Metti alla prova le tue conoscenze sul mondo antico e romano</p>
+            <p class="subtitle">Dal mondo romano ai confini di oggi</p>
           </header>
 
-          <section class="panel">
+          <section id="mode-selection" class="mode-selection" aria-label="Modalità di gioco">
+            <button id="history-mode-btn" type="button" class="mode-choice">
+              <span class="choice-art history-art" aria-hidden="true"><img src="./mappa-impero-romano.jpg" alt="" /></span>
+              <span class="choice-content"><span class="eyebrow">150 a.C. — 117 d.C.</span><span class="choice-title">Modalità Storia</span><span class="choice-description">Territori e capitali dell’Impero Romano</span><span class="choice-action">Scegli l’epoca <span aria-hidden="true">→</span></span></span>
+            </button>
+            <button id="modern-mode-btn" type="button" class="mode-choice modern-choice">
+              <span id="modern-preview" class="choice-art" aria-hidden="true"></span>
+              <span class="choice-content"><span class="eyebrow">Europa · Mediterraneo</span><span class="choice-title">Modalità Attualità</span><span class="choice-description">Stati e capitali del mondo di oggi</span><span class="choice-action">Scegli Attualità <span aria-hidden="true">→</span></span></span>
+            </button>
+          </section>
+
+          <div id="mode-setup" hidden>
+          <div class="setup-heading"><button id="back-modes-btn" type="button" class="btn btn-ghost btn-sm"><span aria-hidden="true">←</span> Modalità</button><h2 id="setup-title">Modalità Storia</h2></div>
+          <section id="history-setup" class="panel">
             <div class="panel-head">
               <h2>1. Scegli il periodo storico</h2>
               <p>Il periodo determina quali territori compariranno sulla mappa.</p>
@@ -39,7 +53,7 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
               </span>
               <div>
-                <p class="eyebrow">2. Modalità</p>
+                 <p class="eyebrow">Sfida a tempo</p>
                 <h2>Time Attack Rapido</h2>
                 <p class="mode-desc">Hai 5 minuti per totalizzare più punti possibile. Ogni risposta corretta vale di più se rispondi in fretta.</p>
               </div>
@@ -71,6 +85,7 @@
               </button>
             </div>
           </section>
+          </div>
         </div>
       </section>
 
@@ -108,10 +123,10 @@
             <section class="panel map-panel">
               <div class="panel-head row">
                 <div>
-                  <p class="eyebrow">Mappa del periodo</p>
+                   <p id="map-heading" class="eyebrow">Mappa del periodo</p>
                   <h2 id="game-period"></h2>
                 </div>
-                <div class="legend"><span class="swatch" aria-hidden="true"></span>Territori del periodo</div>
+                 <div class="legend"><span class="swatch" aria-hidden="true"></span>Territorio richiesto</div>
               </div>
               <div class="map-wrap">
                 <div id="map" class="map-stage" role="img" aria-label="Cartina storica dell'Impero Romano">
@@ -130,7 +145,6 @@
               <h2 id="q-text" class="q-text"></h2>
               <div id="options" class="options"></div>
               <p id="feedback" class="feedback" aria-live="polite"></p>
-              <p class="hint">Suggerimento: premi i tasti 1-4 per rispondere più in fretta.</p>
             </section>
           </div>
         </div>
@@ -170,14 +184,15 @@
 
             <div class="results-actions">
               <button id="again-btn" type="button" class="btn btn-primary btn-lg">Gioca di nuovo</button>
-              <button id="change-btn" type="button" class="btn btn-ghost">Cambia periodo</button>
+               <button id="change-btn" type="button" class="btn btn-ghost">Cambia modalità</button>
             </div>
           </div>
         </div>
       </section>
     </main>
 
-    <script src="./data.js?v=3"></script>
-    <script src="./app.js?v=3"></script>
+     <script src="./data.js?v=4"></script>
+     <script src="./modern-data.js?v=4"></script>
+     <script src="./app.js?v=4"></script>
   </body>
 </html>
