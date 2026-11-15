@@ -42,11 +42,11 @@
   }
 
   function buildMarkers() {
-    const markersHtml = Object.entries(REGIONS)
-      .map(([id, region]) => `<span class="map-marker" data-id="${id}" data-label="${region.name}" style="left:${region.position.left}%;top:${region.position.top}%"><span class="map-marker-core"></span></span>`)
+    const markersHtml = Object.keys(REGIONS)
+      .map((id) => `<img class="map-region" data-id="${id}" src="./regions/${id}.png" alt="" draggable="false" />`)
       .join('');
     $('map').insertAdjacentHTML('beforeend', markersHtml);
-    $('map').querySelectorAll('.map-marker').forEach((el) => {
+    $('map').querySelectorAll('.map-region').forEach((el) => {
       markers[el.dataset.id] = el;
     });
   }
