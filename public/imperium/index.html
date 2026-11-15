@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Imperium: il quiz di geostoria sul mondo antico e romano. Individua territori e capitali sulla mappa del Mediterraneo in una sfida contro il tempo." />
+    <title>Imperium: Il Quiz di Geostoria</title>
+    <link rel="stylesheet" href="./style.css" />
+    <meta property="og:image" content="https://bolt.new/static/og_default.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://bolt.new/static/og_default.png">
+  </head>
+  <body>
+    <div class="ambient" aria-hidden="true"></div>
+
+    <main>
+      <section id="screen-home" class="screen active">
+        <div class="container">
+          <header class="home-hero">
+            <div class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>
+            </div>
+            <p class="eyebrow">Quiz di geostoria · Mediterraneo antico</p>
+            <h1>Imperium<span class="title-accent">: Il Quiz di Geostoria</span></h1>
+            <p class="subtitle">Metti alla prova le tue conoscenze sul mondo antico e romano</p>
+          </header>
+
+          <section class="panel">
+            <div class="panel-head">
+              <h2>1. Scegli il periodo storico</h2>
+              <p>Il periodo determina quali territori compariranno sulla mappa.</p>
+            </div>
+            <div id="period-list" class="period-grid"></div>
+          </section>
+
+          <section class="panel mode-panel">
+            <div class="mode-info">
+              <span class="mode-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
+              </span>
+              <div>
+                <p class="eyebrow">2. Modalità</p>
+                <h2>Time Attack Rapido</h2>
+                <p class="mode-desc">Hai 5 minuti per totalizzare più punti possibile. Ogni risposta corretta vale di più se rispondi in fretta.</p>
+              </div>
+            </div>
+
+            <ul class="rules">
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 6"/><line x1="9" x2="9" y1="3" y2="18"/><line x1="15" x2="15" y1="6" y2="21"/></svg>
+                <span>Osserva il territorio evidenziato sulla mappa</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                <span>Indovina il nome o la capitale storica</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span>Hai 15 secondi per domanda: più sei veloce, più punti ottieni</span>
+              </li>
+            </ul>
+
+            <div class="mode-footer">
+              <div class="mode-timer" aria-label="Durata: 5 minuti">
+                <span class="mode-timer-value">05:00</span>
+                <span class="mode-timer-label">tempo totale</span>
+              </div>
+              <button id="start-btn" type="button" class="btn btn-primary btn-lg">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+                Inizia la partita
+              </button>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section id="screen-game" class="screen">
+        <div class="container game-container">
+          <header class="hud">
+            <div class="hud-clock" id="hud-clock">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <div class="hud-clock-body">
+                <span class="hud-label">Tempo totale</span>
+                <span id="clock-value" class="clock-value">05:00</span>
+                <div class="clock-track"><div id="clock-fill" class="clock-fill"></div></div>
+              </div>
+            </div>
+
+            <div class="hud-stats">
+              <div class="hud-stat">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+                <div><span class="hud-label">Punti</span><strong id="score">0</strong></div>
+              </div>
+              <div class="hud-stat good">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
+                <div><span class="hud-label">Esatte</span><strong id="correct">0</strong></div>
+              </div>
+              <div class="hud-stat bad">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                <div><span class="hud-label">Sbagliate</span><strong id="wrong">0</strong></div>
+              </div>
+            </div>
+
+            <button id="quit-btn" type="button" class="btn btn-ghost btn-sm">Termina</button>
+          </header>
+
+          <div class="game-grid">
+            <section class="panel map-panel">
+              <div class="panel-head row">
+                <div>
+                  <p class="eyebrow">Mappa del periodo</p>
+                  <h2 id="game-period"></h2>
+                </div>
+                <div class="legend"><span class="swatch" aria-hidden="true"></span>Territori del periodo</div>
+              </div>
+              <div class="map-wrap">
+                <div id="map" class="map-stage" role="img" aria-label="Cartina storica dell'Impero Romano">
+                  <img class="map-image" src="./mappa-impero-romano.jpg" alt="" draggable="false" />
+                </div>
+              </div>
+            </section>
+
+            <section class="panel quiz-panel">
+              <div class="q-meta">
+                <span id="q-count" class="eyebrow"></span>
+                <span id="q-time" class="q-time">15s</span>
+              </div>
+              <div class="q-track"><div id="q-bar-fill" class="q-fill"></div></div>
+              <p id="q-kind" class="q-kind"></p>
+              <h2 id="q-text" class="q-text"></h2>
+              <div id="options" class="options"></div>
+              <p id="feedback" class="feedback" aria-live="polite"></p>
+              <p class="hint">Suggerimento: premi i tasti 1-4 per rispondere più in fretta.</p>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section id="screen-results" class="screen">
+        <div class="results-wrap">
+          <div class="panel results-card">
+            <div class="results-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+            </div>
+            <p id="res-period" class="eyebrow"></p>
+            <h2 class="results-title">Partita conclusa</h2>
+            <p id="res-reason" class="subtitle"></p>
+
+            <div class="final-score">
+              <span id="res-score" class="final-score-value">0</span>
+              <span class="final-score-label">punti totali</span>
+            </div>
+
+            <div class="result-stats">
+              <div class="stat-tile good">
+                <span id="res-correct" class="stat-value">0</span>
+                <span class="stat-label">Risposte esatte</span>
+              </div>
+              <div class="stat-tile bad">
+                <span id="res-wrong" class="stat-value">0</span>
+                <span class="stat-label">Risposte sbagliate</span>
+              </div>
+              <div class="stat-tile">
+                <span id="res-accuracy" class="stat-value">0%</span>
+                <span class="stat-label">Precisione</span>
+              </div>
+            </div>
+
+            <p id="res-rank" class="rank"></p>
+
+            <div class="results-actions">
+              <button id="again-btn" type="button" class="btn btn-primary btn-lg">Gioca di nuovo</button>
+              <button id="change-btn" type="button" class="btn btn-ghost">Cambia periodo</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="./data.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
