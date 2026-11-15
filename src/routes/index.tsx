@@ -1,23 +1,25 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-// The home route ships no og:image, so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Imperium: Il Quiz di Geostoria" },
+      { name: "description", content: "Quiz di geostoria sull'Impero Romano: riconosci territori e capitali sulla cartina storica in 5 minuti." },
+      { property: "og:title", content: "Imperium: Il Quiz di Geostoria" },
+      { property: "og:description", content: "Riconosci territori e capitali dell'Impero Romano sulla cartina storica in 5 minuti." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <iframe
+      src="/imperium/index.html"
+      title="Imperium: Il Quiz di Geostoria"
+      className="block h-screen w-full border-0"
+    />
   );
 }
