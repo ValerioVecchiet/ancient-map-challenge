@@ -17,7 +17,7 @@ export const Route = createFileRoute("/")({
 function Index() {
   return (
     <iframe
-      src="/imperium/index.html"
+      src="/imperium/index.html?v=3"
       title="Imperium: Il Quiz di Geostoria"
       className="block h-screen w-full border-0"
     />
