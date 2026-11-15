@@ -42,12 +42,16 @@
   }
 
   function buildMarkers() {
-    const markersHtml = Object.keys(REGIONS)
-      .map((id) => `<img class="map-region" data-id="${id}" src="./regions/${id}.png" alt="" draggable="false" />`)
+    const paths = Object.keys(REGIONS)
+      .map((id) => `<path class="map-region" data-id="${id}" d="${REGION_SHAPES[id]}"><title>${REGIONS[id].name}</title></path>`)
       .join('');
-    $('map').insertAdjacentHTML('beforeend', markersHtml);
+    $('map').insertAdjacentHTML('beforeend', `<svg class="map-regions" viewBox="0 0 1920 1323" preserveAspectRatio="none" aria-hidden="true">${paths}</svg>`);
     $('map').querySelectorAll('.map-region').forEach((el) => {
       markers[el.dataset.id] = el;
+      el.addEventListener('click', () => {
+        Object.values(markers).forEach((other) => other !== el && other.classList.remove('is-selected'));
+        el.classList.toggle('is-selected');
+      });
     });
   }
 
@@ -58,7 +62,7 @@
 
   function highlightRegion(id, state = null) {
     Object.entries(markers).forEach(([regionId, el]) => {
-      el.classList.remove('is-active', 'is-ok', 'is-ko');
+      el.classList.remove('is-active', 'is-ok', 'is-ko', 'is-selected');
       el.classList.toggle('is-off', !periodRegionIds.includes(regionId));
     });
     if (id && state) setRegionState(id, state);
