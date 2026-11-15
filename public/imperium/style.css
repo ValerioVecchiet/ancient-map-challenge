@@ -12,6 +12,12 @@
   --land: #c8a46e;
   --success: #34d399;
   --danger: #f87171;
+  --fluorescent: #eaff00;
+  --fluorescent-glow: rgba(234, 255, 0, 0.9);
+  --sea-modern: #0b2432;
+  --country-modern: #30465a;
+  --country-border: #80929e;
+  --country-context: #1a303e;
   --radius: 16px;
   --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --font-display: Georgia, 'Times New Roman', serif;
@@ -80,6 +86,47 @@ button:disabled {
 .screen.active {
   display: block;
   animation: fade-up 0.5s ease both;
+}
+
+[hidden] { display: none !important; }
+
+.mode-selection {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.mode-choice {
+  padding: 0;
+  overflow: hidden;
+  text-align: left;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  color: var(--text);
+  background: var(--panel);
+  transition: border-color .25s ease, transform .25s ease;
+}
+
+.mode-choice:hover { border-color: var(--gold); transform: translateY(-3px); }
+.modern-choice:hover { border-color: var(--fluorescent); }
+.choice-art { display: block; height: 230px; overflow: hidden; background: var(--sea-modern); }
+.choice-art img { width: 100%; height: 100%; object-fit: cover; }
+.choice-art svg { width: 100%; height: 100%; }
+.preview-country { fill: var(--country-modern); stroke: var(--country-border); stroke-width: 1.2; }
+.choice-content { display: grid; gap: 10px; padding: 24px; }
+.choice-title { font: 700 1.75rem/1.2 var(--font-display); }
+.choice-description { color: var(--muted); }
+.choice-action { display: flex; justify-content: space-between; align-items: center; color: var(--gold-strong); font-weight: 600; margin-top: 12px; }
+.modern-choice .choice-action, .modern-choice .eyebrow { color: var(--fluorescent); }
+.setup-heading { display: flex; gap: 20px; align-items: center; margin-bottom: 24px; }
+.setup-heading h2 { font-size: 1.5rem; }
+
+@media (max-width: 639px) {
+  .mode-selection { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .choice-art { height: 160px; }
+  .choice-content { padding: 20px; }
+  .choice-title { font-size: 1.5rem; }
+  .home-hero { padding: 8px 0 24px; gap: 12px; }
 }
 
 .container {
@@ -535,7 +582,7 @@ button:disabled {
   width: 14px;
   height: 14px;
   border-radius: 4px;
-  background: #eaff00;
+  background: var(--fluorescent);
 }
 
 .map-wrap {
@@ -569,9 +616,9 @@ button:disabled {
 }
 
 .map-region {
-  fill: #eaff00;
+  fill: var(--fluorescent);
   fill-opacity: 0;
-  stroke: #eaff00;
+  stroke: var(--fluorescent);
   stroke-opacity: 0;
   stroke-width: 3;
   cursor: pointer;
@@ -589,7 +636,7 @@ button:disabled {
 .map-region.is-selected {
   fill-opacity: 0.85;
   stroke-opacity: 1;
-  filter: drop-shadow(0 0 10px rgba(234, 255, 0, 0.9));
+  animation: region-glow 1.4s ease-in-out infinite;
 }
 
 .map-region.is-active {
@@ -599,16 +646,16 @@ button:disabled {
 }
 
 .map-region.is-ok {
-  fill: #34d399;
-  stroke: #34d399;
+  fill: var(--success);
+  stroke: var(--success);
   fill-opacity: 0.85;
   stroke-opacity: 1;
   filter: drop-shadow(0 0 8px rgba(52, 211, 153, 0.9));
 }
 
 .map-region.is-ko {
-  fill: #f87171;
-  stroke: #f87171;
+  fill: var(--danger);
+  stroke: var(--danger);
   fill-opacity: 0.85;
   stroke-opacity: 1;
   filter: drop-shadow(0 0 8px rgba(248, 113, 113, 0.9));
@@ -617,13 +664,37 @@ button:disabled {
 @keyframes region-glow {
   0%, 100% {
     fill-opacity: 0.7;
-    filter: drop-shadow(0 0 4px rgba(234, 255, 0, 0.9));
+    filter: drop-shadow(0 0 4px var(--fluorescent-glow));
   }
   50% {
     fill-opacity: 1;
-    filter: drop-shadow(0 0 16px rgba(234, 255, 0, 1)) drop-shadow(0 0 30px rgba(234, 255, 0, 0.7));
+    filter: drop-shadow(0 0 16px var(--fluorescent-glow)) drop-shadow(0 0 30px var(--fluorescent-glow));
   }
 }
+
+.modern-map-wrap { aspect-ratio: 1200 / 950; background: var(--sea-modern); }
+.modern-map { background: var(--sea-modern); }
+.map-context { fill: var(--country-context); stroke: var(--line-strong); stroke-width: 1; }
+.modern-map .map-region {
+  fill: var(--country-modern);
+  fill-opacity: 1;
+  stroke: var(--country-border);
+  stroke-opacity: 1;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  fill-rule: evenodd;
+  transition: fill .3s ease, filter .3s ease;
+}
+.modern-map .map-region:hover,
+.modern-map .map-region:focus-visible,
+.modern-map .map-region.is-selected,
+.modern-map .map-region.is-active {
+  fill: var(--fluorescent);
+  stroke: var(--fluorescent);
+  animation: region-glow 1.4s ease-in-out infinite;
+}
+.modern-map .map-region.is-ok { fill: var(--success); stroke: var(--success); }
+.modern-map .map-region.is-ko { fill: var(--danger); stroke: var(--danger); }
 
 .q-meta {
   display: flex;
